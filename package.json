@@ -7,7 +7,8 @@
   "type": "commonjs",
   "source": "./public/js/index.js",
   "scripts": {
-    "start:dev": "nodemon server.js",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production nodemon server.js",
     "watch:js": "parcel watch --no-hmr  --dist-dir public/js/bundle",
     "build:js": "parcel build  --dist-dir public/js/bundle"
@@ -49,5 +50,8 @@
     "buffer": "^6.0.3",
     "cross-env": "^7.0.3",
     "parcel": "^2.15.2"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   }
 }
