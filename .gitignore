@@ -56,3 +56,6 @@ Thumbs.db
 # Build output
 dist/
 build/
+
+# cache
+.parcel-cache/

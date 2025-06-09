@@ -10,6 +10,7 @@ const reviewRouter = require('./routes/reviewRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 
+const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -31,7 +32,7 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 if (process.env.NODE_ENV === 'development') {
   app.use(
     helmet.contentSecurityPolicy({
@@ -84,6 +85,7 @@ app.use(
     ],
   })
 );
+app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use((req, res, next) => {
