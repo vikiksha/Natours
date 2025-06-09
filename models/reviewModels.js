@@ -57,7 +57,7 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
       },
     },
   ]);
-  console.log('stats:', stats);
+  // console.log('stats:', stats);
   if (stats.length > 0) {
     await Tour.findByIdAndUpdate(tourId, {
       ratingsQuantity: stats[0].nRating,
@@ -77,7 +77,7 @@ reviewSchema.post('save', function () {
 
 reviewSchema.pre(/^findOneAnd/, async function (next) {
   this.r = await this.clone().findOne();
-  console.log('this.r:', this.r);
+  // console.log('this.r:', this.r);
   next();
 });
 reviewSchema.post(/^findOneAnd/, async function () {

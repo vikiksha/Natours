@@ -44,7 +44,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role || 'user',
   });
   const url = `${req.protocol}://${req.get('host')}/me`;
-  console.log(url);
+  // console.log(url);
   await new Email(newUser, url).sendWelcome();
   createSendToken(newUser, 201, res);
 });
@@ -72,7 +72,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
-  console.log(token);
+  // console.log(token);
   if (!token) {
     return next(
       new AppError('You are not logged in! Please log into get access.', 401)
@@ -80,7 +80,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
+  // console.log(decoded);
 
   const freshUser = await User.findById(decoded.id);
   if (!freshUser) {
@@ -136,7 +136,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.passwordResetExpires = undefined;
     user.passwordResetToken = undefined;
     await user.save({ validateBeforeSave: false });
-    console.log('Email error: ', err);
+    // console.log('Email error: ', err);
     return next(
       new AppError('There was an error sending the email. Try again later', 500)
     );
@@ -144,7 +144,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  console.log(req.params.token);
+  // console.log(req.params.token);
   const hashedToken = crypto
     .createHash('sha256')
     .update(req.params?.token)
@@ -196,7 +196,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
       }
 
       res.locals.user = freshUser;
-      console.log('FreshUser:', freshUser);
+      // console.log('FreshUser:', freshUser);
       return next();
     } catch (err) {
       return next(); // move on silently if token is invalid

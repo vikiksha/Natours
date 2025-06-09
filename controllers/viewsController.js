@@ -37,13 +37,11 @@ exports.getAccount = (req, res) => {
 };
 
 exports.getMyTours = catchAsync(async (req, res, next) => {
-  console.log('My get tours');
   const bookings = await Booking.find({ user: req.user.id });
-  console.log('My get mid tours');
+
   const tourIds = bookings.map((el) => el.tour);
-  console.log('My get beforeend tours');
+
   const tours = await Tour.find({ _id: { $in: tourIds } });
-  console.log('My get end tours');
 
   res.status(200).render('overview', {
     title: 'My tours',

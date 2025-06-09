@@ -19,7 +19,7 @@ mongoose.connect(DB).then((con) => {
 });
 const app = require('./app');
 
-console.log(process.env.NODE_ENV);
+// console.log(process.env.NODE_ENV);
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`Listening to the port on ${process.env.PORT}`);
