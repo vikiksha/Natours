@@ -2,6 +2,7 @@ const moongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+// const { stringify } = require('querystring');
 // name, email, photo, password, passwordConfirm
 const userSchema = new moongoose.Schema({
   name: {
@@ -15,7 +16,7 @@ const userSchema = new moongoose.Schema({
     lowercase: true,
     validator: [validator.isEmail, 'please provide a valid email'],
   },
-  photo: String,
+  photo: { type: String, default: 'default.jpg' },
   password: {
     type: String,
     required: [true, 'please provide the password'],

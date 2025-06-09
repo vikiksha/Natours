@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModels');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const sendEmail = require('../utils/email');
+const Email = require('../utils/email');
 
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -43,7 +43,9 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
     role: req.body.role || 'user',
   });
-
+  const url = `${req.protocol}://${req.get('host')}/me`;
+  console.log(url);
+  await new Email(newUser, url).sendWelcome();
   createSendToken(newUser, 201, res);
 });
 
@@ -96,6 +98,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
   req.user = freshUser;
+  res.locals.user = freshUser;
   next();
 });
 
@@ -122,14 +125,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetUrl = `${req.protocol}://${req.get(
     'host'
   )}/api/v1/users/resetpassword/${resetToken}`;
-  const message = `Forgot your password? submit a patch request with your new password and passwordconfirm to : ${resetUrl},\nIf you didnot please ignore this email`;
+  // console.log('resurl:', resetUrl);1
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Your password reset token (valid for 10 mins)',
-      message: message,
-    });
-
+    await new Email(user, resetUrl).sendPasswordReset();
     res.status(200).json({
       status: 'success',
       message: 'Token sent to email',
@@ -184,7 +182,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
 // only for render pages
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
-  console.log(req.cookie);
+  // console.log(req.cookie);
   if (req.cookies?.jwt) {
     try {
       const decoded = await promisify(jwt.verify)(
@@ -206,3 +204,11 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
   }
   return next(); // only one next(), always
 });
+
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  }),
+    res.status(200).json({ status: 'success' });
+};
